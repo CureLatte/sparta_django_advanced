@@ -1,0 +1,6 @@
+# Idea Project
+.idea/
+
+# Python
+__pycache__
+# 가상환경이 프로젝트 밖에 있어서, git ignore 하지 않습니다.
