@@ -34,12 +34,30 @@ class TestArticleService(TestCase):
         do_like(user.id, articles[-1].id)
 
         # When
-        result_articles = get_article_list(0, 10)
+
+        # with CaptureQueriesContext(connection) as ctx: 쿼리 명령어를 확인하기 위한 부분
+        with self.assertNumQueries(3):
+            result_articles = get_article_list(user.id, 0, 10)
+            result_counts = [a.like_set.count() for a in result_articles]
+
+            # Then
+            self.assertEqual(len(result_articles), 10)
+            self.assertEqual(1, result_counts[0])
+            self.assertEqual(
+                [a.id for a in reversed(articles[10:21])],
+                [a.id for a in result_articles],
+            )
+
+    def test_get_article_list_should_contain_my_like_when_like_exists(self) -> None:
+        # Given
+        user = User.objects.create(name="test_user")
+        article1 = Article.objects.create(title="artice1")
+        like = do_like(user.id, article1.id)
+        Article.objects.create(title="article2")
+
+        # When
+        articles = get_article_list(user.id, 0, 10)
 
         # Then
-        self.assertEqual(len(result_articles), 10)
-        self.assertEqual(1, result_articles[0].like_set.count())
-        self.assertEqual(
-            [a.id for a in reversed(articles[10:21])],
-            [a.id for a in result_articles],
-        )
+        self.assertEqual(like.id, articles[1].my_likes[0].id)
+        self.assertEqual(0, len(articles[0].my_likes))
