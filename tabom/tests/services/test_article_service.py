@@ -49,9 +49,9 @@ class TestArticleService(TestCase):
         do_like(user.id, articles[-1].id)
 
         # When
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             result_articles = get_article_list(user.id, 0, 10)
-            result_counts = [a.like_set.count() for a in result_articles]
+            result_counts = [a.like_count for a in result_articles]
 
             # Then
             self.assertEqual(len(result_articles), 10)

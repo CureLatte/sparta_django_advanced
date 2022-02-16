@@ -37,6 +37,19 @@ class TestArticleRouter(TestCase):
         self.assertEqual(title, response.json()["title"])
         self.assertEqual(like.id, response.json()["my_likes"][0]["id"])
 
+    # 단일 기사를 가져올 때 없는 기사를 가져올 경우
+    def test_get_article_what_if_no_article(self) -> None:
+        # Given
+        article_id = 9900
+        user = User.objects.create(name="test_user")
+
+        # when
+        response = self.client.get(f"/api/v1/articles/{article_id}", {"user_id": user.id})
+
+        # Then
+        self.assertEqual(404, response.status_code)
+        self.assertEqual(f"Article #{article_id} Not Found", response.json()["detail"])
+
     def test_get_articles(self) -> None:
         # Given
         title = "test_title"
