@@ -5,7 +5,7 @@ description = ""
 authors = ["js <zhqmfkv@naver.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.11"
 Django = "^4.0.2"
 django-ninja = "0.16.1"
 black = "21.12b0"
